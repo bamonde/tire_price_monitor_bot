@@ -1,5 +1,12 @@
 # Monitor de Preços de Pneu
 
+[![CI](https://github.com/bamonde/tire_price_monitor_bot/actions/workflows/ci.yml/badge.svg)](https://github.com/bamonde/tire_price_monitor_bot/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/github/license/bamonde/tire_price_monitor_bot)](LICENSE)
+![Node.js](https://img.shields.io/badge/node-%3E%3D20-green)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+[![Telegram Bot](https://img.shields.io/badge/Telegram-@tire__price__monitor__bot-26A5E4?logo=telegram&logoColor=white)](https://t.me/tire_price_monitor_bot)
+
 Monitor automático de preços (à vista e parcelado) e disponibilidade de produtos em páginas de busca, com histórico simples e alertas no Telegram.
 
 Bot de alertas: [@tire_price_monitor_bot](https://t.me/tire_price_monitor_bot)
