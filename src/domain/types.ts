@@ -38,7 +38,7 @@ export interface AvailabilityChange {
 export type AlertEvent = PriceChange | AvailabilityChange;
 
 export interface MonitorConfig {
-  monitorUrl: string;
+  monitorUrls: string[];
   historyFile: string;
   retentionHours: number;
   telegramBotToken: string;

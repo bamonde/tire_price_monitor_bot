@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { sendTelegramAlerts } from "./alerts/telegram";
 import { compareSnapshots } from "./alerts/compare";
+import { parseMonitorUrls } from "./config/monitor-urls";
+import { MonitorConfig } from "./domain/types";
 import {
   appendSnapshots,
   getLatestSnapshotsByProduct,
@@ -8,15 +10,10 @@ import {
   pruneHistory,
   readHistory,
 } from "./history/store";
-import { fetchProducts } from "./scraper/nitro";
-import { MonitorConfig } from "./domain/types";
+import { fetchAllProducts } from "./products/fetch-all";
 
 function loadConfig(): MonitorConfig {
-  const monitorUrl = process.env.MONITOR_URL;
-
-  if (!monitorUrl) {
-    throw new Error("Variável MONITOR_URL é obrigatória.");
-  }
+  const monitorUrls = parseMonitorUrls();
 
   const historyFile =
     process.env.HISTORY_FILE ?? "/app/data/price-history.jsonl";
@@ -40,7 +37,7 @@ function loadConfig(): MonitorConfig {
   }
 
   return {
-    monitorUrl,
+    monitorUrls,
     historyFile,
     retentionHours,
     telegramBotToken,
@@ -54,17 +51,20 @@ async function main(): Promise<void> {
   const startedAt = new Date().toISOString();
 
   console.log(`[${startedAt}] Iniciando monitor (runId=${runId})`);
-  console.log(`URL: ${config.monitorUrl}`);
+  console.log(`URLs monitoradas: ${config.monitorUrls.length}`);
+  for (const url of config.monitorUrls) {
+    console.log(`- ${url}`);
+  }
 
   const history = await readHistory(config.historyFile);
   const previousSnapshots = getLatestSnapshotsByProduct(history);
   const firstRun = isFirstRun(history);
 
-  const products = await fetchProducts(config.monitorUrl);
+  const products = await fetchAllProducts(config.monitorUrls);
   console.log(`Produtos encontrados: ${products.length}`);
 
   if (products.length === 0) {
-    throw new Error("Nenhum produto encontrado na página monitorada.");
+    throw new Error("Nenhum produto encontrado nas páginas monitoradas.");
   }
 
   await appendSnapshots(config.historyFile, runId, products);

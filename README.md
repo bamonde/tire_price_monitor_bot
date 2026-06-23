@@ -26,7 +26,7 @@ Bot de alertas: [@tire_price_monitor_bot](https://t.me/tire_price_monitor_bot)
 
 ## O que faz
 
-- Coleta produtos da URL de busca configurada
+- Coleta produtos de uma ou mais URLs de busca configuradas
 - Extrai preço no Pix (à vista), parcelamento e status (disponível/indisponível)
 - Salva histórico em arquivo JSONL (`data/price-history.jsonl`)
 - Mantém apenas os últimos **3 dias** de histórico
@@ -74,7 +74,7 @@ https://api.telegram.org/bot<TOKEN>/getUpdates
 
 ```bash
 cp .env.example .env
-# Edite .env com MONITOR_URL, TELEGRAM_BOT_TOKEN e TELEGRAM_CHAT_ID
+# Edite .env com MONITOR_URL (ou MONITOR_URLS), TELEGRAM_BOT_TOKEN e TELEGRAM_CHAT_ID
 
 docker compose up --build -d
 ```
@@ -97,7 +97,8 @@ docker compose logs -f monitor
 
 | Variável | Descrição | Padrão |
 |---|---|---|
-| `MONITOR_URL` | URL de busca monitorada | **obrigatório** |
+| `MONITOR_URL` | URL de busca monitorada (uma busca) | **obrigatório** se `MONITOR_URLS` não estiver definida |
+| `MONITOR_URLS` | Várias URLs separadas por vírgula ou quebra de linha | opcional (pode ser usada junto com `MONITOR_URL`) |
 | `HISTORY_FILE` | Caminho do histórico | `/app/data/price-history.jsonl` |
 | `HISTORY_RETENTION_HOURS` | Retenção do histórico | `72` (3 dias) |
 | `TELEGRAM_BOT_TOKEN` | Token do bot | **obrigatório** |
@@ -154,7 +155,7 @@ Horários de execução (America/Sao_Paulo): **06:00, 08:00, 10:00, 12:00, 14:00
 
 | Problema | Solução |
 |---|---|
-| `MONITOR_URL é obrigatória` | Preencha `MONITOR_URL` no `.env` |
+| `MONITOR_URL é obrigatória` | Preencha `MONITOR_URL` ou `MONITOR_URLS` no `.env` |
 | `TELEGRAM_BOT_TOKEN e TELEGRAM_CHAT_ID são obrigatórias` | Preencha `.env` e recrie o container |
 | Bot não envia mensagens | Confirme token/chat ID; envie `/start` ao bot |
 | Nenhum produto encontrado | Verifique se a URL de busca ainda retorna resultados |
