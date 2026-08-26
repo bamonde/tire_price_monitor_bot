@@ -1,0 +1,278 @@
+{
+  "SearchResults": [
+    {
+      "UniqueId": 73901769,
+      "Specification": {
+        "Title": "HYUNDAI HB20 1.0 TGDI FLEX PLATINUM AUTOMÁTICO",
+        "Make": {
+          "Value": "HYUNDAI"
+        },
+        "Model": {
+          "Value": "HB20"
+        },
+        "Version": {
+          "Value": "1.0 TGDI FLEX PLATINUM AUTOMÁTICO"
+        },
+        "YearFabrication": "2022",
+        "YearModel": 2023.0,
+        "Odometer": 43100.0,
+        "NumberPorts": "4"
+      },
+      "Prices": {
+        "Price": 81000.0
+      },
+      "FipePercent": 93,
+      "Seller": {
+        "SellerType": "PF",
+        "AdType": {
+          "id": 4,
+          "Value": "Pessoa Física"
+        },
+        "City": "Campinas",
+        "State": "São Paulo (SP)",
+        "Localization": [
+          {
+            "State": "São Paulo (SP)",
+            "City": "Campinas",
+            "AbbrState": "SP"
+          }
+        ]
+      }
+    },
+    {
+      "UniqueId": 70788840,
+      "Specification": {
+        "Title": "HYUNDAI HB20 1.0 TGDI FLEX PLATINUM SAFETY AUTOMÁTICO",
+        "Make": {
+          "Value": "HYUNDAI"
+        },
+        "Model": {
+          "Value": "HB20"
+        },
+        "Version": {
+          "Value": "1.0 TGDI FLEX PLATINUM SAFETY AUTOMÁTICO"
+        },
+        "YearFabrication": "2024",
+        "YearModel": 2025.0,
+        "Odometer": 18600.0,
+        "NumberPorts": "4"
+      },
+      "Prices": {
+        "Price": 99900.0
+      },
+      "FipePercent": 105,
+      "Seller": {
+        "SellerType": "PJ",
+        "AdType": {
+          "id": 2,
+          "Value": "Concessionária"
+        },
+        "FantasyName": "AUTO MECANICA",
+        "City": "Videira",
+        "State": "Santa Catarina (SC)",
+        "Localization": [
+          {
+            "State": "Santa Catarina (SC)",
+            "City": "Videira"
+          }
+        ]
+      }
+    },
+    {
+      "UniqueId": 78357315,
+      "Specification": {
+        "Title": "HYUNDAI HB20 1.0 TGDI FLEX COMFORT PLUS AUTOMÁTICO",
+        "Make": {
+          "Value": "HYUNDAI"
+        },
+        "Model": {
+          "Value": "HB20"
+        },
+        "Version": {
+          "Value": "1.0 TGDI FLEX COMFORT PLUS AUTOMÁTICO"
+        },
+        "YearFabrication": "2025",
+        "YearModel": 2025.0,
+        "Odometer": 38394.0,
+        "NumberPorts": "4"
+      },
+      "Prices": {
+        "Price": 95590.0
+      },
+      "FipePercent": 104,
+      "Seller": {
+        "SellerType": "PJ",
+        "AdType": {
+          "id": 1,
+          "Value": "Loja"
+        },
+        "FantasyName": "EXEMPLO MOTORS",
+        "City": "Curitiba",
+        "State": "Paraná (PR)"
+      }
+    },
+    {
+      "UniqueId": 78421541,
+      "Specification": {
+        "Title": "HYUNDAI HB20 1.0 TGDI FLEX COMFORT PLUS AUTOMÁTICO",
+        "Make": {
+          "Value": "HYUNDAI"
+        },
+        "Model": {
+          "Value": "HB20"
+        },
+        "Version": {
+          "Value": "1.0 TGDI FLEX COMFORT PLUS AUTOMÁTICO"
+        },
+        "YearFabrication": "2023",
+        "YearModel": 2024.0,
+        "Odometer": 53210.0,
+        "NumberPorts": "4"
+      },
+      "Prices": {
+        "Price": 79660.0
+      },
+      "FipePercent": 93,
+      "Seller": {
+        "SellerType": "PF",
+        "AdType": {
+          "id": 4,
+          "Value": "Pessoa Física"
+        },
+        "City": "Belo Horizonte",
+        "State": "Minas Gerais (MG)"
+      }
+    },
+    {
+      "UniqueId": 78276902,
+      "Specification": {
+        "Title": "HYUNDAI HB20 1.0 TGDI FLEX COMFORT PLUS AUTOMÁTICO",
+        "Make": {
+          "Value": "HYUNDAI"
+        },
+        "Model": {
+          "Value": "HB20"
+        },
+        "Version": {
+          "Value": "1.0 TGDI FLEX COMFORT PLUS AUTOMÁTICO"
+        },
+        "YearFabrication": "2023",
+        "YearModel": 2024.0,
+        "Odometer": 66165.0,
+        "NumberPorts": "4"
+      },
+      "Prices": {
+        "Price": 82460.0
+      },
+      "FipePercent": 96,
+      "Seller": {
+        "SellerType": "PJ",
+        "AdType": {
+          "id": 1,
+          "Value": "Loja"
+        },
+        "FantasyName": "LIDER PREMIUM",
+        "City": "São José do Rio Preto",
+        "State": "São Paulo (SP)"
+      }
+    },
+    {
+      "UniqueId": 58618372,
+      "Specification": {
+        "Title": "HYUNDAI HB20 1.0 TGDI FLEX COMFORT PLUS AUTOMÁTICO",
+        "Make": {
+          "Value": "HYUNDAI"
+        },
+        "Model": {
+          "Value": "HB20"
+        },
+        "Version": {
+          "Value": "1.0 TGDI FLEX COMFORT PLUS AUTOMÁTICO"
+        },
+        "YearFabrication": "2024",
+        "YearModel": 2024.0,
+        "Odometer": 0.0,
+        "NumberPorts": "4"
+      },
+      "Prices": {
+        "Price": 110990.0
+      },
+      "FipePercent": null,
+      "Seller": {
+        "SellerType": "PJ",
+        "AdType": {
+          "id": 2,
+          "Value": "Concessionária"
+        },
+        "FantasyName": "HYUNDAI CENTER",
+        "City": "São Paulo",
+        "State": "São Paulo (SP)"
+      }
+    },
+    {
+      "UniqueId": 65848522,
+      "Specification": {
+        "Title": "HYUNDAI HB20 1.0 TGDI FLEX COMFORT PLUS TECH AUTOMÁTICO",
+        "Make": {
+          "Value": "HYUNDAI"
+        },
+        "Model": {
+          "Value": "HB20"
+        },
+        "Version": {
+          "Value": "1.0 TGDI FLEX COMFORT PLUS TECH AUTOMÁTICO"
+        },
+        "YearFabrication": "2024",
+        "YearModel": 2025.0,
+        "Odometer": 0.0,
+        "NumberPorts": "4"
+      },
+      "Prices": {
+        "Price": 123010.0
+      },
+      "FipePercent": null,
+      "Seller": {
+        "SellerType": "PJ",
+        "AdType": {
+          "id": 1,
+          "Value": "Loja"
+        },
+        "FantasyName": "TECH AUTO",
+        "City": "Rio de Janeiro",
+        "State": "Rio de Janeiro (RJ)"
+      }
+    },
+    {
+      "UniqueId": 77802817,
+      "Specification": {
+        "Title": "HYUNDAI HB20 1.0 12V FLEX COMFORT PLUS MANUAL",
+        "Make": {
+          "Value": "HYUNDAI"
+        },
+        "Model": {
+          "Value": "HB20"
+        },
+        "Version": {
+          "Value": "1.0 12V FLEX COMFORT PLUS MANUAL"
+        },
+        "YearFabrication": "2025",
+        "YearModel": 2025.0,
+        "Odometer": 39000.0,
+        "NumberPorts": "4"
+      },
+      "Prices": {
+        "Price": 69900.0
+      },
+      "FipePercent": 95,
+      "Seller": {
+        "SellerType": "PF",
+        "AdType": {
+          "id": 4,
+          "Value": "Pessoa Física"
+        },
+        "City": "São Paulo",
+        "State": "São Paulo (SP)"
+      }
+    }
+  ]
+}

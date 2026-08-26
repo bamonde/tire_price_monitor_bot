@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
-import { Availability, ProductSnapshot } from "../domain/types";
-import { parseBrazilianPrice } from "../utils/price";
+import { Availability, ProductSnapshot } from "./types";
+import { parseBrazilianPrice } from "../shared/price";
 
 const USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
@@ -127,4 +127,26 @@ function extractInstallment(cardText: string): {
     installmentCount: Number.parseInt(match[1], 10),
     installmentPrice: parseBrazilianPrice(match[2]),
   };
+}
+
+export async function fetchAllProducts(
+  monitorUrls: string[],
+): Promise<ProductSnapshot[]> {
+  const batches = await Promise.all(
+    monitorUrls.map((url) => fetchProducts(url)),
+  );
+
+  return mergeProductsById(batches.flat());
+}
+
+export function mergeProductsById(
+  products: ProductSnapshot[],
+): ProductSnapshot[] {
+  const byId = new Map<string, ProductSnapshot>();
+
+  for (const product of products) {
+    byId.set(product.id, product);
+  }
+
+  return [...byId.values()];
 }

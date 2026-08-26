@@ -1,10 +1,10 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { deriveBaseUrl, parseProductsFromHtml } from "../scraper/nitro";
+import { deriveBaseUrl, mergeProductsById, parseProductsFromHtml } from "./fetch";
+import { ProductSnapshot } from "./types";
 
 const fixturePath = path.join(__dirname, "fixtures", "search-sample.html");
-
 const monitorUrl = "https://shop.example.com/busca?page=1&search=90%2F90-21";
 
 describe("deriveBaseUrl", () => {
@@ -34,5 +34,35 @@ describe("parseProductsFromHtml", () => {
     const unavailable = products.find((p) => p.availability === "out_of_stock");
     expect(unavailable).toBeDefined();
     expect(unavailable?.availability).toBe("out_of_stock");
+  });
+});
+
+function product(
+  id: string,
+  overrides: Partial<ProductSnapshot> = {},
+): ProductSnapshot {
+  return {
+    id,
+    name: `Produto ${id}`,
+    url: `https://shop.example.com/p?id=${id}`,
+    cashPrice: 100,
+    installmentPrice: 10,
+    installmentCount: 12,
+    availability: "in_stock",
+    capturedAt: "2026-01-01T00:00:00.000Z",
+    ...overrides,
+  };
+}
+
+describe("mergeProductsById", () => {
+  it("deduplica produtos pelo id", () => {
+    const merged = mergeProductsById([
+      product("001", { cashPrice: 100 }),
+      product("002"),
+      product("001", { cashPrice: 90 }),
+    ]);
+
+    expect(merged).toHaveLength(2);
+    expect(merged.find((p) => p.id === "001")?.cashPrice).toBe(90);
   });
 });

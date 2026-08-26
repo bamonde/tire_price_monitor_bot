@@ -1,36 +1,26 @@
 import { randomUUID } from "node:crypto";
-import { sendTelegramAlerts } from "./alerts/telegram";
-import { compareSnapshots } from "./alerts/compare";
-import { parseMonitorUrls } from "./config/monitor-urls";
-import { MonitorConfig } from "./domain/types";
+import { getTelegramCredentials } from "../shared/telegram";
+import { parseMonitorUrls, resolveHistoryFile } from "./config";
+import { compareSnapshots } from "./compare";
+import { fetchAllProducts } from "./fetch";
 import {
   appendSnapshots,
   getLatestSnapshotsByProduct,
   isFirstRun,
   pruneHistory,
   readHistory,
-} from "./history/store";
-import { fetchAllProducts } from "./products/fetch-all";
+} from "./store";
+import { sendTelegramAlerts } from "./telegram";
+import { NitroConfig } from "./types";
 
-function loadConfig(): MonitorConfig {
+function loadConfig(): NitroConfig {
   const monitorUrls = parseMonitorUrls();
-
-  const historyFile =
-    process.env.HISTORY_FILE ?? "/app/data/price-history.jsonl";
-
+  const historyFile = resolveHistoryFile();
   const retentionHours = Number.parseInt(
     process.env.HISTORY_RETENTION_HOURS ?? "72",
     10,
   );
-
-  const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
-  const telegramChatId = process.env.TELEGRAM_CHAT_ID;
-
-  if (!telegramBotToken || !telegramChatId) {
-    throw new Error(
-      "Variáveis TELEGRAM_BOT_TOKEN e TELEGRAM_CHAT_ID são obrigatórias.",
-    );
-  }
+  const { botToken, chatId } = getTelegramCredentials();
 
   if (!Number.isFinite(retentionHours) || retentionHours <= 0) {
     throw new Error("HISTORY_RETENTION_HOURS deve ser um número positivo.");
@@ -40,8 +30,8 @@ function loadConfig(): MonitorConfig {
     monitorUrls,
     historyFile,
     retentionHours,
-    telegramBotToken,
-    telegramChatId,
+    telegramBotToken: botToken,
+    telegramChatId: chatId,
   };
 }
 
@@ -50,7 +40,7 @@ async function main(): Promise<void> {
   const runId = randomUUID();
   const startedAt = new Date().toISOString();
 
-  console.log(`[${startedAt}] Iniciando monitor (runId=${runId})`);
+  console.log(`[${startedAt}] Iniciando monitor Nitro (runId=${runId})`);
   console.log(`URLs monitoradas: ${config.monitorUrls.length}`);
   for (const url of config.monitorUrls) {
     console.log(`- ${url}`);
@@ -103,6 +93,6 @@ async function main(): Promise<void> {
 
 main().catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
-  console.error(`Erro no monitor: ${message}`);
+  console.error(`Erro no monitor Nitro: ${message}`);
   process.exitCode = 1;
 });

@@ -29,9 +29,9 @@ COPY --from=builder /app/dist ./dist
 COPY scripts ./scripts
 COPY cron ./cron
 
-RUN chmod +x /app/scripts/run-monitor.sh /app/scripts/entrypoint.sh \
+RUN chmod +x /app/scripts/run-monitor.sh /app/scripts/run-webmotors.sh /app/scripts/entrypoint.sh \
   && cp /app/cron/monitor.cron /etc/cron.d/monitor \
   && chmod 0644 /etc/cron.d/monitor \
-  && mkdir -p /app/data
+  && mkdir -p /app/data/nitro /app/data/webmotors
 
 CMD ["/app/scripts/entrypoint.sh"]

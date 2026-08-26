@@ -18,3 +18,9 @@ export function parseMonitorUrls(
 
   return unique;
 }
+
+export function resolveHistoryFile(
+  env: NodeJS.ProcessEnv = process.env,
+): string {
+  return env.HISTORY_FILE ?? "/app/data/nitro/price-history.jsonl";
+}

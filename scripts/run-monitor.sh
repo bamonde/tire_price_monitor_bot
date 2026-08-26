@@ -2,5 +2,5 @@
 set -eu
 
 cd /app
-echo "[$(date -Iseconds)] Executando monitor de preços..."
-node dist/index.js
+echo "[$(date -Iseconds)] Executando monitor Nitro (pneus)..."
+node dist/nitro/index.js

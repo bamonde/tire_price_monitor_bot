@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -6,8 +6,8 @@ import {
   appendSnapshots,
   pruneHistory,
   readHistory,
-} from "../history/store";
-import { ProductSnapshot } from "../domain/types";
+} from "./store";
+import { ProductSnapshot } from "./types";
 
 describe("history store", () => {
   it("persiste snapshots e remove entradas antigas", async () => {

@@ -7,6 +7,7 @@ services:
       - .env
     environment:
       TZ: America/Sao_Paulo
-      HISTORY_FILE: /app/data/price-history.jsonl
+      HISTORY_FILE: /app/data/nitro/price-history.jsonl
+      WEBMOTORS_SEEN_FILE: /app/data/webmotors/seen.json
     volumes:
       - ./data:/app/data

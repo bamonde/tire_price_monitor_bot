@@ -2,7 +2,7 @@ import {
   AlertEvent,
   Availability,
   ProductSnapshot,
-} from "../domain/types";
+} from "./types";
 
 function pricesEqual(a: number | null, b: number | null): boolean {
   return a === b;

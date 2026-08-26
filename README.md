@@ -1,4 +1,4 @@
-# Monitor de Preços de Pneu
+# Monitor de Preços de Pneu + Webmotors
 
 [![CI](https://github.com/bamonde/tire_price_monitor_bot/actions/workflows/ci.yml/badge.svg)](https://github.com/bamonde/tire_price_monitor_bot/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/github/license/bamonde/tire_price_monitor_bot)](LICENSE)
@@ -7,7 +7,7 @@
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 [![Telegram Bot](https://img.shields.io/badge/Telegram-@tire__price__monitor__bot-26A5E4?logo=telegram&logoColor=white)](https://t.me/tire_price_monitor_bot)
 
-Monitor automático de preços (à vista e parcelado) e disponibilidade de produtos em páginas de busca, com histórico simples e alertas no Telegram.
+Dois jobs no mesmo container: **Nitro** (preço/estoque de pneus) e **Webmotors** (anúncios novos de HB20 1.0 TGDI). Cada loja tem pasta, store e cron próprios; o Telegram é compartilhado.
 
 Bot de alertas: [@tire_price_monitor_bot](https://t.me/tire_price_monitor_bot)
 
@@ -17,24 +17,45 @@ Bot de alertas: [@tire_price_monitor_bot](https://t.me/tire_price_monitor_bot)
 |---|---|
 | Runtime | Node.js 20 |
 | Linguagem | TypeScript |
-| HTTP / scraping | Axios + Cheerio |
+| HTTP / scraping | Axios + Cheerio (Nitro) · Axios JSON (Webmotors) |
 | Notificações | Telegram Bot API |
-| Histórico | JSONL (arquivo local) |
+| Histórico Nitro | JSONL (`data/nitro/`) |
+| Vistos Webmotors | JSON (`data/webmotors/seen.json`) |
 | Agendamento | Cron (no container) |
 | Container | Docker + Docker Compose |
 | Testes | Vitest |
 
-## O que faz
+## Módulos
 
-- Coleta produtos de uma ou mais URLs de busca configuradas
-- Extrai preço no Pix (à vista), parcelamento e status (disponível/indisponível)
-- Salva histórico em arquivo JSONL (`data/price-history.jsonl`)
-- Mantém apenas os últimos **3 dias** de histórico
-- Envia alerta no Telegram quando:
-  - preço à vista ou parcelado muda
-  - produto fica disponível ou indisponível
-- Envia mensagem no Telegram quando o **container inicia**
-- Executa automaticamente via **cron** a cada **2 horas**, entre **06:00 e 22:00** (horário de São Paulo)
+```text
+src/shared/     envio Telegram, preço BRL
+src/nitro/      job de pneus (loja Nitro)
+src/webmotors/  job HB20 1.0 TGDI
+data/nitro/     histórico de preços
+data/webmotors/ IDs de anúncios já vistos
+```
+
+### Nitro (pneus)
+
+- Coleta produtos de URLs de busca configuradas
+- Extrai preço no Pix, parcelamento e disponibilidade
+- Alerta no Telegram quando preço ou estoque mudam
+- Retenção de histórico: **72h** (configurável)
+
+### Webmotors (HB20)
+
+Watch fixo:
+
+- Hyundai HB20 · 1.0 **TGDI** · ano **2023–2025**
+- Versões: Comfort/Confort Plus, Platinum, Platinum Plus, Platinum Safety, Limited  
+  (Comfort Plus Tech **não** entra)
+- Conta anúncios **novos** (ID que ainda não estava no store)
+- Envia ficha + link só se **km ≤ 50.000** (km ausente = sem link)
+- Primeira execução: baseline sem alerta
+- Zero novos: silêncio
+- Fonte fora (403 etc.): alerta “Webmotors fora” — sem Playwright/bypass
+
+API usada: `GET https://www.webmotors.com.br/api/search/car.xml` (JSON público da listagem).
 
 ## Pré-requisitos
 
@@ -68,7 +89,7 @@ https://api.telegram.org/bot<TOKEN>/getUpdates
 
 1. Adicione o bot ao grupo
 2. Envie uma mensagem no grupo
-3. Use o mesmo endpoint `getUpdates` e copie o `chat.id` do grupo (geralmente negativo, ex: `-1001234567890`)
+3. Use o mesmo endpoint `getUpdates` e copie o `chat.id` do grupo (geralmente negativo)
 
 ## Instalação e execução
 
@@ -82,10 +103,14 @@ docker compose up --build -d
 ### Executar manualmente (teste)
 
 ```bash
+# Nitro
 docker compose run --rm monitor /app/scripts/run-monitor.sh
+
+# Webmotors
+docker compose run --rm monitor /app/scripts/run-webmotors.sh
 ```
 
-> Na **primeira execução**, o monitor apenas grava o histórico baseline — **sem alertas retroativos**.
+> Na **primeira execução** de cada módulo, só grava o store/histórico — **sem alertas retroativos**.
 
 ### Ver logs
 
@@ -97,10 +122,11 @@ docker compose logs -f monitor
 
 | Variável | Descrição | Padrão |
 |---|---|---|
-| `MONITOR_URL` | URL de busca monitorada (uma busca) | **obrigatório** se `MONITOR_URLS` não estiver definida |
-| `MONITOR_URLS` | Várias URLs separadas por vírgula ou quebra de linha | opcional (pode ser usada junto com `MONITOR_URL`) |
-| `HISTORY_FILE` | Caminho do histórico | `/app/data/price-history.jsonl` |
-| `HISTORY_RETENTION_HOURS` | Retenção do histórico | `72` (3 dias) |
+| `MONITOR_URL` | URL de busca Nitro | obrigatório se `MONITOR_URLS` vazio |
+| `MONITOR_URLS` | Várias URLs Nitro | opcional |
+| `HISTORY_FILE` | Histórico Nitro | `/app/data/nitro/price-history.jsonl` (legado `/app/data/price-history.jsonl` ainda funciona) |
+| `HISTORY_RETENTION_HOURS` | Retenção Nitro | `72` |
+| `WEBMOTORS_SEEN_FILE` | IDs vistos Webmotors | `/app/data/webmotors/seen.json` |
 | `TELEGRAM_BOT_TOKEN` | Token do bot | **obrigatório** |
 | `TELEGRAM_CHAT_ID` | ID do chat/grupo | **obrigatório** |
 | `TZ` | Fuso horário | `America/Sao_Paulo` |
@@ -112,51 +138,33 @@ npm install
 npm test
 npm run build
 
-# Execução direta (requer .env)
 export $(grep -v '^#' .env | xargs)
-HISTORY_FILE=./data/price-history.jsonl npm run dev
-```
-
-## Estrutura do histórico
-
-Cada linha do arquivo JSONL representa um produto em uma execução:
-
-```json
-{
-  "id": "0002223",
-  "name": "Combo de Pneus Kenda Big Block 90/90-21 + 150/70-17",
-  "url": "https://shop.example.com/produto/0002223/p?id=0002223",
-  "cashPrice": 1306.82,
-  "installmentPrice": 120.67,
-  "installmentCount": 12,
-  "availability": "in_stock",
-  "capturedAt": "2026-06-22T22:00:00.000Z",
-  "runId": "uuid-da-execucao"
-}
+HISTORY_FILE=./data/nitro/price-history.jsonl npm run dev:nitro
+WEBMOTORS_SEEN_FILE=./data/webmotors/seen.json npm run dev:webmotors
 ```
 
 ## Cron
 
-Agenda configurada em [`cron/monitor.cron`](cron/monitor.cron):
+Agenda em [`cron/monitor.cron`](cron/monitor.cron):
 
-```cron
-0 6-22/2 * * *
-```
+- Nitro: `0 6-22/2 * * *` → `run-monitor.sh` (a cada 2h, 06:00–22:00)
+- Webmotors: `*/30 6-22 * * *` → `run-webmotors.sh` (a cada 30 min, 06:00–22:30)
 
-Horários de execução (America/Sao_Paulo): **06:00, 08:00, 10:00, 12:00, 14:00, 16:00, 18:00, 20:00, 22:00**.
+Horários Nitro (America/Sao_Paulo): **06:00, 08:00, 10:00, 12:00, 14:00, 16:00, 18:00, 20:00, 22:00**.  
+Webmotors: a cada meia hora no mesmo intervalo diurno.
 
 ## Limitações
 
-- O parser depende da estrutura HTML da página de busca configurada
-- Mudanças de layout no site podem exigir ajuste nos seletores em [`src/scraper/nitro.ts`](src/scraper/nitro.ts)
-- O histórico fica no volume `./data` — faça backup se necessário
+- Nitro: parser depende do HTML da página de busca; layout novo exige ajuste em [`src/nitro/fetch.ts`](src/nitro/fetch.ts)
+- Webmotors: depende do endpoint público `car.xml`; 403/challenge → alerta “fonte fora”, sem contornar bloqueio
+- Stores ficam no volume `./data` — faça backup se necessário
 
 ## Troubleshooting
 
 | Problema | Solução |
 |---|---|
 | `MONITOR_URL é obrigatória` | Preencha `MONITOR_URL` ou `MONITOR_URLS` no `.env` |
-| `TELEGRAM_BOT_TOKEN e TELEGRAM_CHAT_ID são obrigatórias` | Preencha `.env` e recrie o container |
+| `TELEGRAM_BOT_TOKEN e TELEGRAM_CHAT_ID são obrigatórias` | Preencha `.env` e recreie o container |
 | Bot não envia mensagens | Confirme token/chat ID; envie `/start` ao bot |
-| Nenhum produto encontrado | Verifique se a URL de busca ainda retorna resultados |
-| Cron não executa | Verifique logs com `docker compose logs -f monitor` |
+| Webmotors fonte fora | Endpoint bloqueou o IP; use alerta nativo do app enquanto isso |
+| Cron não executa | `docker compose logs -f monitor` |

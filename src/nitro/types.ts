@@ -37,7 +37,7 @@ export interface AvailabilityChange {
 
 export type AlertEvent = PriceChange | AvailabilityChange;
 
-export interface MonitorConfig {
+export interface NitroConfig {
   monitorUrls: string[];
   historyFile: string;
   retentionHours: number;

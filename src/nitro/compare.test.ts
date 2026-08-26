@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { compareSnapshots } from "../alerts/compare";
-import { ProductSnapshot } from "../domain/types";
+import { compareSnapshots } from "./compare";
+import { ProductSnapshot } from "./types";
 
 function snapshot(
   overrides: Partial<ProductSnapshot> & Pick<ProductSnapshot, "id" | "name" | "url">,

@@ -1,6 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { HistoryEntry, ProductSnapshot } from "../domain/types";
+import { HistoryEntry, ProductSnapshot } from "./types";
 
 export async function ensureHistoryDir(historyFile: string): Promise<void> {
   await fs.mkdir(path.dirname(historyFile), { recursive: true });

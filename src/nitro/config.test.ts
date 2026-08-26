@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseMonitorUrls } from "./monitor-urls";
+import { parseMonitorUrls, resolveHistoryFile } from "./config";
 
 describe("parseMonitorUrls", () => {
   it("aceita MONITOR_URL única", () => {
@@ -38,5 +38,17 @@ describe("parseMonitorUrls", () => {
     expect(() => parseMonitorUrls({})).toThrow(
       "Defina MONITOR_URL ou MONITOR_URLS",
     );
+  });
+});
+
+describe("resolveHistoryFile", () => {
+  it("usa default em data/nitro", () => {
+    expect(resolveHistoryFile({})).toBe("/app/data/nitro/price-history.jsonl");
+  });
+
+  it("respeita HISTORY_FILE legado", () => {
+    expect(
+      resolveHistoryFile({ HISTORY_FILE: "/app/data/price-history.jsonl" }),
+    ).toBe("/app/data/price-history.jsonl");
   });
 });

@@ -1,4 +1,4 @@
-import { sendStartupNotification } from "./alerts/telegram";
+import { sendStartupNotification } from "./nitro/telegram";
 
 async function main(): Promise<void> {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;

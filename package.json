@@ -1,12 +1,16 @@
 {
   "name": "pneu-price-monitor",
   "version": "1.0.0",
-  "description": "Monitor de preços de pneus com alertas no Telegram",
-  "main": "dist/index.js",
+  "description": "Monitor de preços de pneus (Nitro) e anúncios Webmotors com alertas no Telegram",
+  "main": "dist/nitro/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "tsx src/index.ts",
+    "start": "npm run start:nitro",
+    "start:nitro": "node dist/nitro/index.js",
+    "start:webmotors": "node dist/webmotors/index.js",
+    "dev": "npm run dev:nitro",
+    "dev:nitro": "tsx src/nitro/index.ts",
+    "dev:webmotors": "tsx src/webmotors/index.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },

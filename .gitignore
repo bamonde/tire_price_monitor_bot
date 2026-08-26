@@ -2,5 +2,8 @@ node_modules/
 dist/
 .env
 data/price-history.jsonl
+data/nitro/
+data/webmotors/
 *.log
 .DS_Store
+.probe-*

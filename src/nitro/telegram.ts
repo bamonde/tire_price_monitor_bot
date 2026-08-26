@@ -1,31 +1,19 @@
-import axios from "axios";
-import { AlertEvent } from "../domain/types";
+import {
+  escapeHtml,
+  sendTelegramMessage,
+} from "../shared/telegram";
+import { formatBrazilianPrice } from "../shared/price";
 import { availabilityLabel } from "./compare";
-import { formatBrazilianPrice } from "../utils/price";
-
-export async function sendTelegramMessage(
-  botToken: string,
-  chatId: string,
-  text: string,
-): Promise<void> {
-  await axios.post(
-    `https://api.telegram.org/bot${botToken}/sendMessage`,
-    {
-      chat_id: chatId,
-      text,
-      parse_mode: "HTML",
-      disable_web_page_preview: true,
-    },
-    { timeout: 15_000 },
-  );
-}
+import { AlertEvent } from "./types";
 
 export function formatStartupMessage(): string {
   return [
-    "<b>Monitor de Pneus</b>",
+    "<b>Monitor Preços e Classificados</b>",
     "",
     "Serviço iniciado.",
-    "Agenda: a cada 2h entre 06:00 e 22:00 (America/Sao_Paulo).",
+    "Jobs: Nitro (pneus) + Webmotors (HB20).",
+    "Nitro: a cada 2h entre 06:00 e 22:00.",
+    "Webmotors: a cada 30 min entre 06:00 e 22:30 (America/Sao_Paulo).",
   ].join("\n");
 }
 
@@ -69,11 +57,4 @@ function formatSingleEvent(event: AlertEvent): string {
     `Parcelado: ${formatBrazilianPrice(event.previousInstallmentPrice)} → ${formatBrazilianPrice(event.currentInstallmentPrice)}`,
     `<a href="${event.url}">Ver produto</a>`,
   ].join("\n");
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
 }

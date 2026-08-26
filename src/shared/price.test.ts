@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseBrazilianPrice, formatBrazilianPrice } from "../utils/price";
+import { parseBrazilianPrice, formatBrazilianPrice } from "./price";
 
 describe("parseBrazilianPrice", () => {
   it("converte preço pt-BR para número", () => {
