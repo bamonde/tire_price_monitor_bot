@@ -20,6 +20,7 @@ import { findNewListings, buildSeenStore } from "./compare";
 import {
   formatFipeLine,
   formatListingCard,
+  formatNewListingsAlert,
   formatNewListingsMessage,
 } from "./telegram";
 import { ListingSnapshot } from "./types";
@@ -262,17 +263,30 @@ describe("telegram format", () => {
     const listings = loadFixtureListings();
     const matching = filterMatching(listings, HB20_TGDI_WATCH);
     const highlights = filterHighlights(matching, HB20_TGDI_WATCH).slice(0, 2);
-    const message = formatNewListingsMessage(HB20_TGDI_WATCH, {
+    const alert = formatNewListingsAlert(HB20_TGDI_WATCH, {
       allMatching: matching,
       newListings: matching,
       highlightListings: highlights,
       firstRun: false,
     });
 
-    expect(message).toContain("Webmotors");
-    expect(message).toContain("anúncio(s) novo(s)");
-    expect(message).toContain("Versão:");
-    expect(message).toContain("Ver anúncio");
+    expect(alert).not.toBeNull();
+    expect(alert?.messages).toHaveLength(3);
+
+    const [summary, firstCard, secondCard] = alert!.messages;
+    expect(summary.text).toContain("Webmotors");
+    expect(summary.text).toContain("anúncio(s) novo(s)");
+    expect(summary.text).not.toContain("Versão:");
+    expect(summary.buttons).toEqual([]);
+
+    expect(firstCard.text).toContain("Versão:");
+    expect(firstCard.text).not.toContain("Ver anúncio");
+    expect(firstCard.buttons).toEqual([
+      { text: "Ver anúncio", url: highlights[0].url },
+    ]);
+    expect(secondCard.buttons).toEqual([
+      { text: "Ver anúncio", url: highlights[1].url },
+    ]);
   });
 
   it("card inclui campos pedidos", () => {
@@ -288,6 +302,26 @@ describe("telegram format", () => {
     expect(card).toContain("Vendedor: Pessoa Física");
     expect(card).toContain("Loja: n/d");
     expect(card).toContain("Local: Campinas/SP");
+    expect(card).not.toContain("Ver anúncio");
+    expect(card).not.toContain("<a href");
+  });
+
+  it("um único destaque usa botão sem numeração", () => {
+    const listings = loadFixtureListings();
+    const matching = filterMatching(listings, HB20_TGDI_WATCH);
+    const highlights = filterHighlights(matching, HB20_TGDI_WATCH).slice(0, 1);
+    const alert = formatNewListingsAlert(HB20_TGDI_WATCH, {
+      allMatching: matching,
+      newListings: matching,
+      highlightListings: highlights,
+      firstRun: false,
+    });
+
+    expect(alert?.messages).toHaveLength(2);
+    expect(alert?.messages[0]?.buttons).toEqual([]);
+    expect(alert?.messages[1]?.buttons).toEqual([
+      { text: "Ver anúncio", url: highlights[0].url },
+    ]);
   });
 
   it("card de loja inclui nome fantasia", () => {

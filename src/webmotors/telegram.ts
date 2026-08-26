@@ -1,9 +1,19 @@
 import {
   escapeHtml,
   sendTelegramMessage,
+  TelegramUrlButton,
 } from "../shared/telegram";
 import { formatBrazilianPrice } from "../shared/price";
 import { ListingSnapshot, NewListingsResult, WatchConfig } from "./types";
+
+export interface TelegramAlertMessage {
+  text: string;
+  buttons: TelegramUrlButton[];
+}
+
+export interface FormattedListingsAlert {
+  messages: TelegramAlertMessage[];
+}
 
 const TELEGRAM_MAX_CHARS = 3900;
 const MAX_HIGHLIGHT_CARDS = 8;
@@ -61,14 +71,20 @@ export function formatListingCard(listing: ListingSnapshot): string {
     `Vendedor: ${escapeHtml(listing.sellerKind || "n/d")}`,
     `Loja: ${escapeHtml(listing.sellerName || "n/d")}`,
     `Local: ${escapeHtml(formatLocation(listing.city, listing.state))}`,
-    `<a href="${listing.url}">Ver anúncio</a>`,
   ].join("\n");
 }
 
-export function formatNewListingsMessage(
+function listingCardMessage(listing: ListingSnapshot): TelegramAlertMessage {
+  return {
+    text: formatListingCard(listing),
+    buttons: [{ text: "Ver anúncio", url: listing.url }],
+  };
+}
+
+export function formatNewListingsAlert(
   watch: WatchConfig,
   result: NewListingsResult,
-): string | null {
+): FormattedListingsAlert | null {
   if (result.firstRun || result.newListings.length === 0) {
     return null;
   }
@@ -81,15 +97,16 @@ export function formatNewListingsMessage(
   const highlights = result.highlightListings;
   if (highlights.length === 0) {
     header.push(`Nenhum com até ${watch.maxKmForLink.toLocaleString("pt-BR")} km.`);
-    return header.join("\n");
+    return { messages: [{ text: header.join("\n"), buttons: [] }] };
   }
 
   header.push(
     `${highlights.length} com até ${watch.maxKmForLink.toLocaleString("pt-BR")} km:`,
-    "",
   );
 
-  const cards: string[] = [];
+  const messages: TelegramAlertMessage[] = [
+    { text: header.join("\n"), buttons: [] },
+  ];
   let omitted = 0;
 
   for (let i = 0; i < highlights.length; i++) {
@@ -98,21 +115,29 @@ export function formatNewListingsMessage(
       break;
     }
 
-    const card = `${i + 1}. ${formatListingCard(highlights[i])}`;
-    const candidate = [...header, ...cards, card, ""].join("\n");
-    if (candidate.length > TELEGRAM_MAX_CHARS) {
+    const card = listingCardMessage(highlights[i]);
+    if (card.text.length > TELEGRAM_MAX_CHARS) {
       omitted = highlights.length - i;
       break;
     }
-    cards.push(card);
+    messages.push(card);
   }
 
-  const parts = [...header, ...cards];
   if (omitted > 0) {
-    parts.push(`+${omitted} no critério, omitidos.`);
+    messages.push({
+      text: `+${omitted} no critério, omitidos.`,
+      buttons: [],
+    });
   }
 
-  return parts.join("\n").trim();
+  return { messages };
+}
+
+export function formatNewListingsMessage(
+  watch: WatchConfig,
+  result: NewListingsResult,
+): string | null {
+  return formatNewListingsAlert(watch, result)?.messages[0]?.text ?? null;
 }
 
 export function formatSourceDownMessage(detail: string): string {
@@ -129,12 +154,16 @@ export async function sendNewListingsAlert(
   watch: WatchConfig,
   result: NewListingsResult,
 ): Promise<boolean> {
-  const message = formatNewListingsMessage(watch, result);
-  if (!message) {
+  const alert = formatNewListingsAlert(watch, result);
+  if (!alert) {
     return false;
   }
 
-  await sendTelegramMessage(botToken, chatId, message);
+  for (const message of alert.messages) {
+    await sendTelegramMessage(botToken, chatId, message.text, {
+      buttons: message.buttons,
+    });
+  }
   return true;
 }
 

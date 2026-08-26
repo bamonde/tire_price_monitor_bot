@@ -1,18 +1,34 @@
 import axios from "axios";
 
+export interface TelegramUrlButton {
+  text: string;
+  url: string;
+}
+
 export async function sendTelegramMessage(
   botToken: string,
   chatId: string,
   text: string,
+  options?: { buttons?: TelegramUrlButton[] },
 ): Promise<void> {
+  const payload: Record<string, unknown> = {
+    chat_id: chatId,
+    text,
+    parse_mode: "HTML",
+    disable_web_page_preview: true,
+  };
+
+  if (options?.buttons && options.buttons.length > 0) {
+    payload.reply_markup = {
+      inline_keyboard: options.buttons.map((button) => [
+        { text: button.text, url: button.url },
+      ]),
+    };
+  }
+
   await axios.post(
     `https://api.telegram.org/bot${botToken}/sendMessage`,
-    {
-      chat_id: chatId,
-      text,
-      parse_mode: "HTML",
-      disable_web_page_preview: true,
-    },
+    payload,
     { timeout: 15_000 },
   );
 }
