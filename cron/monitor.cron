@@ -5,5 +5,5 @@ TZ=America/Sao_Paulo
 # Nitro (pneus): a cada 2 horas entre 06:00 e 22:00 (America/Sao_Paulo)
 0 6-22/2 * * * root /app/scripts/run-monitor.sh >> /proc/1/fd/1 2>> /proc/1/fd/2
 
-# Webmotors (HB20): a cada 30 min entre 06:00 e 22:30 (America/Sao_Paulo)
-*/30 6-22 * * * root /app/scripts/run-webmotors.sh >> /proc/1/fd/1 2>> /proc/1/fd/2
+# Webmotors (HB20): desativado
+# */30 6-22 * * * root /app/scripts/run-webmotors.sh >> /proc/1/fd/1 2>> /proc/1/fd/2

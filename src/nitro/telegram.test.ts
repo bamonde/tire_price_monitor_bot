@@ -22,8 +22,8 @@ describe("formatStartupMessage", () => {
     const message = formatStartupMessage();
     expect(message).toContain("Monitor Preços e Classificados");
     expect(message).toContain("Serviço iniciado");
-    expect(message).toContain("Webmotors");
-    expect(message).toContain("30 min");
+    expect(message).toContain("Webmotors (HB20) desativado");
+    expect(message).not.toContain("30 min");
     expect(message).toContain("06:00 e 22:00");
   });
 });

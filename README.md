@@ -7,7 +7,7 @@
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 [![Telegram Bot](https://img.shields.io/badge/Telegram-@tire__price__monitor__bot-26A5E4?logo=telegram&logoColor=white)](https://t.me/tire_price_monitor_bot)
 
-Dois jobs no mesmo container: **Nitro** (preço/estoque de pneus) e **Webmotors** (anúncios novos de HB20 1.0 TGDI). Cada loja tem pasta, store e cron próprios; o Telegram é compartilhado.
+Dois jobs no mesmo container: **Nitro** (preço/estoque de pneus, ativo) e **Webmotors** (anúncios de HB20 1.0 TGDI, desativado). Cada loja tem pasta, store e cron próprios; o Telegram é compartilhado.
 
 Bot de alertas: [@tire_price_monitor_bot](https://t.me/tire_price_monitor_bot)
 
@@ -148,10 +148,9 @@ WEBMOTORS_SEEN_FILE=./data/webmotors/seen.json npm run dev:webmotors
 Agenda em [`cron/monitor.cron`](cron/monitor.cron):
 
 - Nitro: `0 6-22/2 * * *` → `run-monitor.sh` (a cada 2h, 06:00–22:00)
-- Webmotors: `*/30 6-22 * * *` → `run-webmotors.sh` (a cada 30 min, 06:00–22:30)
+- Webmotors (HB20): desativado (a linha do cron está comentada)
 
-Horários Nitro (America/Sao_Paulo): **06:00, 08:00, 10:00, 12:00, 14:00, 16:00, 18:00, 20:00, 22:00**.  
-Webmotors: a cada meia hora no mesmo intervalo diurno.
+Horários Nitro (America/Sao_Paulo): **06:00, 08:00, 10:00, 12:00, 14:00, 16:00, 18:00, 20:00, 22:00**.
 
 ## Limitações
 

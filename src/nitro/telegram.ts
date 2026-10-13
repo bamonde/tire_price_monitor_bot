@@ -18,9 +18,8 @@ export function formatStartupMessage(): string {
     "<b>Monitor Preços e Classificados</b>",
     "",
     "Serviço iniciado.",
-    "Jobs: Nitro (pneus) + Webmotors (HB20).",
-    "Nitro: a cada 2h entre 06:00 e 22:00.",
-    "Webmotors: a cada 30 min entre 06:00 e 22:30 (America/Sao_Paulo).",
+    "Jobs: Nitro (pneus). Webmotors (HB20) desativado.",
+    "Nitro: a cada 2h entre 06:00 e 22:00 (America/Sao_Paulo).",
   ].join("\n");
 }
 
